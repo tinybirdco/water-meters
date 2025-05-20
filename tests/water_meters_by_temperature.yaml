@@ -1,0 +1,25 @@
+
+- name: default_temperature_threshold
+  description: "Test with default temperature threshold of 20.0ºC"
+  parameters: ''
+  expected_result: |
+    {"meter_id":1,"current_temperature":19,"current_flow_rate":4.1,"last_updated":"2025-05-16 02:00:43"}
+
+- name: low_temperature_threshold
+  description: "Test with a low temperature threshold of 15.0ºC to find very cold\
+    \ water meters"
+  parameters: temperature_threshold=15.0
+  expected_result: ''
+
+- name: high_temperature_threshold
+  description: "Test with a high temperature threshold of 25.0ºC to find most water\
+    \ meters"
+  parameters: temperature_threshold=25.0
+  expected_result: |
+    {"meter_id":1,"current_temperature":19,"current_flow_rate":4.1,"last_updated":"2025-05-16 02:00:43"}
+
+- name: critical_low_temperature
+  description: "Test with a critical low temperature of 5.0ºC to find meters at\
+    \ risk of freezing"
+  parameters: temperature_threshold=5.0
+  expected_result: ''
