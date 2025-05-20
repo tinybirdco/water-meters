@@ -1,7 +1,7 @@
 
 - name: temperature_sensor_1
   description: Test temperature measurement for sensor ID 1
-  parameters: measurement=temperature&sensor_id=1
+  parameters: measurement=temperature&sensor_id=1&day=2025-05-16
   expected_result: |
     {"meter_id":1,"measurement":"temperature","latest_value":19,"today_avg":10.5}
 
