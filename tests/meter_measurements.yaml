@@ -1,0 +1,17 @@
+
+- name: temperature_sensor_1
+  description: Test temperature measurement for sensor ID 1
+  parameters: measurement=temperature&sensor_id=1
+  expected_result: |
+    {"meter_id":1,"measurement":"temperature","latest_value":19,"today_avg":10.5}
+
+- name: flow_rate_sensor_2
+  description: Test flow rate measurement for sensor ID 2
+  parameters: measurement=flow_rate&sensor_id=2
+  expected_result: ''
+
+- name: invalid_measurement
+  description: Test error handling with invalid measurement parameter
+  parameters: measurement=pressure&sensor_id=1
+  expected_result: measurement query param must be either temperature or flow_rate
+  expected_http_status: 400

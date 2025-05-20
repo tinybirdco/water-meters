@@ -1,0 +1,25 @@
+DESCRIPTION >
+    Returns the latest value and today's average for a specified sensor and measurement
+
+NODE measurements_node
+SQL >
+    %
+    {% if measurement != 'temperature' and measurement != 'flow_rate' %}
+        {{ error('measurement query param must be either temperature or flow_rate') }}
+    {% end %}
+    SELECT 
+        meter_id,
+        {{String(measurement)}} as measurement,
+        {% if String(measurement) == 'temperature' %}
+            argMax(temperature, timestamp) as latest_value,
+            round(avg(temperature), 2) as today_avg
+        {% else %}
+            argMax(flow_rate, timestamp) as latest_value,
+            round(avg(flow_rate), 2) as today_avg
+        {% end %}
+    FROM kafka_water_meters
+    WHERE meter_id = {{Int32(sensor_id)}}
+      AND toDate(timestamp) = today()
+    GROUP BY meter_id
+
+TYPE endpoint

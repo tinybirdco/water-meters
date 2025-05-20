@@ -1,0 +1,10 @@
+SCHEMA >
+    `meter_id` Int32 `json:$.meter_id`,
+    `timestamp` DateTime `json:$.timestamp`,
+    `flow_rate` Float32 `json:$.flow_rate`,
+    `temperature` Float32 `json:$.temperature`
+
+KAFKA_CONNECTION_NAME my_kafka_conn
+KAFKA_TOPIC water_metrics_demo
+KAFKA_GROUP_ID {{ tb_secret("KAFKA_GROUP_ID", "water_meters_local_id") }}
+KAFKA_AUTO_OFFSET_RESET earliest
