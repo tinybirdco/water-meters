@@ -19,7 +19,7 @@ SQL >
         {% end %}
     FROM kafka_water_meters
     WHERE meter_id = {{Int32(sensor_id)}}
-      AND toDate(timestamp) = today()
     GROUP BY meter_id
 
 TYPE endpoint
+
