@@ -1,0 +1,17 @@
+DESCRIPTION >
+    Returns water meters that have temperatures below a specified threshold
+
+NODE water_meters_threshold_node
+SQL >
+    %
+    SELECT 
+        meter_id,
+        argMax(temperature, timestamp) as current_temperature,
+        argMax(flow_rate, timestamp) as current_flow_rate,
+        max(timestamp) as last_updated
+    FROM kafka_water_meters
+    GROUP BY meter_id
+    HAVING current_temperature < {{Float32(temperature_threshold, 20.0)}}
+    ORDER BY current_temperature ASC
+
+TYPE endpoint
