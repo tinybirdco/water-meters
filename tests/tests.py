@@ -105,7 +105,11 @@ def test_all_endpoints():
         
         # Clear workspace
         print("\nClearing workspace...")
-        run_command([TB_COMMAND, "workspace", "clear", "--yes"])
+        try:
+            run_command([TB_COMMAND, "workspace", "clear", "--yes"])
+        except subprocess.CalledProcessError as e:
+            print(f"Warning: Failed to clear workspace: {e.stderr}")
+            print("Continuing with test execution...")
         
         # Deploy the project
         print("\nDeploying project...")
