@@ -1,4 +1,3 @@
-
 name: Tinybird - Kafka full CI Workflow
 
 on:
@@ -40,6 +39,12 @@ jobs:
         docker compose up -d
         # Wait for services to be ready
         sleep 30
+        # Check if services are running
+        docker compose ps
+        # Check Redpanda logs
+        docker compose logs redpanda
+        # Check Tinybird logs
+        docker compose logs tinybird-local
     
     - name: tb info
       run: |
@@ -48,6 +53,7 @@ jobs:
     - name: Run tests
       env:
         TB_COMMAND: "tb"
+        DOCKER_HOST: "unix:///var/run/docker.sock"
       run: |
         pytest tests/tests.py -v -s
     
