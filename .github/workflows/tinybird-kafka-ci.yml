@@ -39,7 +39,7 @@ jobs:
       run: |
         docker compose up -d
         # Wait for services to be ready
-        sleep 10
+        sleep 30
     
     - name: tb info
       run: |
