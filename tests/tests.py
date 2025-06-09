@@ -10,6 +10,14 @@ import glob
 # Get the tb command from environment variable or use default
 TB_COMMAND = os.getenv("TB_COMMAND", os.path.expanduser("~/.local/bin/tb"))
 
+def check_local_server():
+    """Check if the local Tinybird server is running."""
+    try:
+        response = requests.get("http://localhost:7181/tokens")
+        return response.status_code == 200
+    except requests.exceptions.ConnectionError:
+        return False
+
 def load_test_cases(yaml_file):
     """Load test cases from a YAML file."""
     with open(yaml_file, 'r') as f:
@@ -89,6 +97,11 @@ def test_all_endpoints():
     """Test all endpoints using their respective YAML test files."""
     try:
         print("\n=== Setting up test environment ===")
+        
+        # Check if local server is running
+        print("\nChecking local Tinybird server...")
+        if not check_local_server():
+            raise Exception("Local Tinybird server is not running. Please start it with 'docker compose up -d'")
         
         # Clear workspace
         print("\nClearing workspace...")
