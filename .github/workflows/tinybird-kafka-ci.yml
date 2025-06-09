@@ -1,0 +1,52 @@
+
+name: Tinybird - Kafka full CI Workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  TINYBIRD_HOST: ${{ secrets.TINYBIRD_HOST }}
+  TINYBIRD_TOKEN: ${{ secrets.TINYBIRD_TOKEN }}
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: '.'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest requests pyyaml
+        
+    - name: Install Tinybird CLI
+      run: |
+        curl -s https://tinybird.co/install.sh | bash
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        
+    - name: Set up Docker Compose
+      run: |
+        docker compose up -d
+        # Wait for services to be ready
+        sleep 10
+        
+    - name: Run tests
+      env:
+        TB_COMMAND: "tb"
+      run: |
+        pytest tests/tests.py
+    
+    - name: Deployment check
+      run: tb --cloud --host ${{ env.TINYBIRD_HOST }} --token ${{ env.TINYBIRD_TOKEN }} deploy --check

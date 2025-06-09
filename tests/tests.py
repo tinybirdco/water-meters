@@ -7,8 +7,8 @@ import pytest
 import json
 import glob
 
-# Get the absolute path to the tb command
-TB_COMMAND = "/Users/gnz-tb/.local/bin/tb"
+# Get the tb command from environment variable or use default
+TB_COMMAND = os.getenv("TB_COMMAND", os.path.expanduser("~/.local/bin/tb"))
 
 def load_test_cases(yaml_file):
     """Load test cases from a YAML file."""
