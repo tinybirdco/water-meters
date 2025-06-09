@@ -1,6 +1,6 @@
 TYPE kafka
-KAFKA_BOOTSTRAP_SERVERS pkc-l6wr6.europe-west2.gcp.confluent.cloud:9092
-KAFKA_SECURITY_PROTOCOL SASL_SSL
-KAFKA_SASL_MECHANISM PLAIN
-KAFKA_KEY {{ tb_secret("KAFKA_KEY", "key") }}
-KAFKA_SECRET {{ tb_secret("KAFKA_SECRET", "secret") }}
+KAFKA_BOOTSTRAP_SERVERS {{ tb_secret("KAFKA_PROD_SERVER", "redpanda:9092") }}
+KAFKA_SECURITY_PROTOCOL {{ tb_secret("KAFKA_PROD_SECURITY_PROTOCOL", "PLAINTEXT") }}
+KAFKA_SASL_MECHANISM {{ tb_secret("KAFKA_PROD_SASL_MECHANISM", "PLAIN") }}
+KAFKA_KEY {{ tb_secret("KAFKA_KEY", "superuser") }}
+KAFKA_SECRET {{ tb_secret("KAFKA_SECRET", "secretpassword") }}

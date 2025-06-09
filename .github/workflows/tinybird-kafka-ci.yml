@@ -1,0 +1,65 @@
+name: Tinybird - Kafka full CI Workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  TINYBIRD_HOST: ${{ secrets.TINYBIRD_HOST }}
+  TINYBIRD_TOKEN: ${{ secrets.TINYBIRD_TOKEN }}
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: '.'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest requests pyyaml
+        
+    - name: Install Tinybird CLI
+      run: |
+        curl https://tinybird.co | sh
+        
+    - name: Set up Docker Compose
+      run: |
+        docker compose up -d
+        # Wait for services to be ready
+        sleep 30
+        # Check if services are running
+        docker compose ps
+        # Check Redpanda logs
+        docker compose logs redpanda
+        # Check Tinybird logs
+        docker compose logs tinybird-local
+    
+    - name: tb info
+      run: |
+        tb local status
+    
+    - name: create topic
+      run: |
+        docker exec -i redpanda rpk topic create water_metrics_demo -X brokers=redpanda:9092
+        
+    - name: Run tests
+      env:
+        TB_COMMAND: "tb"
+        DOCKER_HOST: "unix:///var/run/docker.sock"
+      run: |
+        pytest tests/tests.py -v -s
+    
+    - name: Deployment check
+      run: tb --cloud --host ${{ env.TINYBIRD_HOST }} --token ${{ env.TINYBIRD_TOKEN }} deploy --check

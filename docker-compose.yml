@@ -1,0 +1,52 @@
+networks:
+  redpanda_network:
+    driver: bridge
+
+volumes:
+  redpanda-0:
+
+services:
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v25.1.4
+    container_name: redpanda
+    platform: linux/amd64
+    command:
+      - redpanda
+      - start
+      - --kafka-addr=internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr=internal://redpanda:9092,external://localhost:19092
+      - --pandaproxy-addr=internal://0.0.0.0:8082,external://0.0.0.0:18082
+      - --advertise-pandaproxy-addr=internal://redpanda:8082,external://localhost:18082
+      - --schema-registry-addr=internal://0.0.0.0:8081,external://0.0.0.0:18081
+      - --rpc-addr=redpanda:33145
+      - --advertise-rpc-addr=redpanda:33145
+      - --mode=dev-container
+      - --smp=1
+      - --default-log-level=info
+    environment:
+      RP_BOOTSTRAP_USER: "superuser:secretpassword"
+    ports:
+      - "18081:18081"
+      - "18082:18082"
+      - "19092:19092"
+      - "19644:9644"
+    volumes:
+      - redpanda-0:/var/lib/redpanda/data
+    networks:
+      - redpanda_network
+    healthcheck:
+      test: ["CMD", "rpk", "cluster", "info", "-X", "user=superuser", "-X", "pass=secretpassword"]
+      interval: 10s
+      timeout: 15s
+      retries: 10
+
+  tinybird-local:
+    image: tinybirdco/tinybird-local:latest
+    container_name: tinybird-local-rp
+    platform: linux/amd64
+    ports:
+      - "7181:7181"
+    networks:
+      - redpanda_network
+    depends_on:
+      - redpanda
