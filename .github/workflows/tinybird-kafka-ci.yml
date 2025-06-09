@@ -40,6 +40,10 @@ jobs:
         docker compose up -d
         # Wait for services to be ready
         sleep 10
+    
+    - name: tb info
+      run: |
+        tb info
         
     - name: Run tests
       env:
