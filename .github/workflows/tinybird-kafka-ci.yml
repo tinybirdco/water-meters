@@ -45,7 +45,7 @@ jobs:
       env:
         TB_COMMAND: "tb"
       run: |
-        pytest tests/tests.py
+        pytest tests/tests.py -v -s
     
     - name: Deployment check
       run: tb --cloud --host ${{ env.TINYBIRD_HOST }} --token ${{ env.TINYBIRD_TOKEN }} deploy --check
