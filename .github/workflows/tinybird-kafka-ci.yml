@@ -33,8 +33,7 @@ jobs:
         
     - name: Install Tinybird CLI
       run: |
-        curl -s https://tinybird.co/install.sh | bash
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        curl https://tinybird.co | sh
         
     - name: Set up Docker Compose
       run: |
