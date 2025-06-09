@@ -43,7 +43,7 @@ jobs:
     
     - name: tb info
       run: |
-        tb info
+        tb local status
         
     - name: Run tests
       env:
