@@ -49,6 +49,10 @@ jobs:
     - name: tb info
       run: |
         tb local status
+    
+    - name: create topic
+      run: |
+        docker exec -i redpanda rpk topic create water_metrics_demo -X brokers=redpanda:9092
         
     - name: Run tests
       env:
